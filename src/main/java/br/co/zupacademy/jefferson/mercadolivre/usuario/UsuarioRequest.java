@@ -5,10 +5,13 @@ import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.co.zupacademy.jefferson.mercadolivre.utils.UniqueValue;
+
 public class UsuarioRequest {
 
 	@Email(message = "Email invalido")
 	@NotBlank(message = "Email não pode ser nulo ou vazio")
+	@UniqueValue(domainClass = Usuario.class, fieldName = "email", message = "Email existente")
 	private String email;
 	@NotBlank(message = "Senha não pode ser nulo ou vazio")
 	@Length(min = 6, message = "Senha deve conter no minimo 6 caracteres")
