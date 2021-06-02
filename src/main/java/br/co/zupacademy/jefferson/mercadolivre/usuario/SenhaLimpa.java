@@ -9,6 +9,9 @@ public class SenhaLimpa {
 	
 	private String senha;
 
+	public SenhaLimpa() {
+	}
+	
 	public SenhaLimpa(@NotBlank @Length(min = 6) String senha) {
 		this.senha = senha;
 	}

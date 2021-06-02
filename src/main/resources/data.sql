@@ -6,5 +6,8 @@ INSERT INTO perfil (authority) VALUES ('ROLE_CLIENT');
 INSERT INTO perfil (authority) VALUES ('ROLE_ADMIN');
 
 INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (1,2);
-INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (2,1);
-INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (3,1);
+INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (2,2);
+INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (3,2);
+
+INSERT INTO categoria (nome) VALUES ('Computadores');
+

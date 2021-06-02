@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureDataJpa
-public class CategoriaControllerTest {
+public class CategoriaControllerTestImpl {
 	
 	@Autowired
 	MockMvc mockMvc;
