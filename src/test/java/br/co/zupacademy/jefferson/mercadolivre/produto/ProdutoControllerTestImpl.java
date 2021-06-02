@@ -1,9 +1,13 @@
 package br.co.zupacademy.jefferson.mercadolivre.produto;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
@@ -56,6 +61,39 @@ public class ProdutoControllerTestImpl {
 				.content(json))
 				.andExpect(status().isOk());
 	}
+	
+	@Test
+	public void adicionaImagemDeveriaSalvarURLDaImagemNoBancoQuandoPertencerAoCriadorDoProduto() throws Exception {
+		String token = obtainAccessToken("alex@gmail.com", "123456");
+		List<String> diversasImagens = Arrays.asList("hello.txt", "miragem.jpg", "correcao.png");
+		
+	    MockMultipartFile file 
+	      = new MockMultipartFile(
+	        "imagens", 
+	        diversasImagens.toString(), 
+	        MediaType.TEXT_PLAIN_VALUE, 
+	        "Hello, World!".getBytes()
+	      );
+		mockMvc.perform(multipart("/produtos/{id}/imagens", 1L).file(file)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+				.andExpect(status().isNoContent());
+	}
+	
+	@Test
+	public void adicionaImagemDeveriaRetornarForbiddenQuandoProdutoNaoPertenceAoUsuarioLogado() throws Exception {
+		String token = obtainAccessToken("tanjiro@gmail.com", "123456");
+	    MockMultipartFile file 
+	      = new MockMultipartFile(
+	        "imagens", 
+	        "hello.txt", 
+	        MediaType.TEXT_PLAIN_VALUE, 
+	        "Hello, World!".getBytes()
+	      );
+		mockMvc.perform(multipart("/produtos/{id}/imagens", 1L).file(file)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+				.andExpect(status().isForbidden());
+	}
+	
 	
 	private String obtainAccessToken(String username, String password) throws Exception {
 		 

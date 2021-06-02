@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 
 import br.co.zupacademy.jefferson.mercadolivre.categoria.Categoria;
 import br.co.zupacademy.jefferson.mercadolivre.usuario.Usuario;
+import br.co.zupacademy.jefferson.mercadolivre.utils.UsuarioLogado;
 
 @Entity
 public class Produto {
@@ -44,7 +45,10 @@ public class Produto {
 	private Instant cadastradoEm;
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
 	private Set<CaracteristicaProduto> caracteristicas = new HashSet<>();
+	@OneToMany(mappedBy = "produto", cascade= CascadeType.MERGE)
+	private Set<ImagemProduto> imagens = new HashSet<>();
 
+	@Deprecated
 	public Produto() {
 	}
 	
@@ -175,24 +179,15 @@ public class Produto {
 			return new Produto(nome, quantidade, descricao, valor, categoria, usuario, caracteristicas);
 		}
 	}
+
+	public void associaImagens(Set<String> links) {
+		Set<ImagemProduto> imagens = links.stream().map(link -> new ImagemProduto(this, link))
+				.collect(Collectors.toSet());
+		this.imagens.addAll(imagens);
+	}
+
+	public boolean verificaSeEDosuarioLogado(UsuarioLogado usuarioLogado) {
+		Usuario usuario = usuarioLogado.getUsuarioLogado();
+		return this.usuario.equals(usuario);
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

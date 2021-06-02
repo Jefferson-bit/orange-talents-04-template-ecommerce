@@ -19,14 +19,14 @@ public class UsuarioLogado implements UserDetailsService {
 	private static final Logger LOG = LoggerFactory.getLogger(UsuarioLogado.class);
 
 	@Autowired
-	private UsuarioRepository usuarioRepository;
+	private  UsuarioRepository usuarioRepository;
 
-	public Usuario buscaUsuario() {
+	public  Usuario getUsuarioLogado() {
 		String name = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
 		return usuario.get();
 	}
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(username);

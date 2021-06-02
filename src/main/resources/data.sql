@@ -10,4 +10,6 @@ INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (2,2);
 INSERT INTO tb_usuario_perfil(usuario_id, perfil_id) VALUES (3,2);
 
 INSERT INTO categoria (nome) VALUES ('Computadores');
+INSERT INTO produto (nome, quantidade, descricao, valor, categoria_id, usuario_id, cadastrado_em)
+ VALUES ('Notebook Dell', 2, 'Excelente notebook', 50000, 1, 1, NOW());
 
