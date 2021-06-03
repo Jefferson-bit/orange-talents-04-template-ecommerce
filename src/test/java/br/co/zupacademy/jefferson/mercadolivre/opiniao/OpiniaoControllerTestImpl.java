@@ -1,5 +1,6 @@
 package br.co.zupacademy.jefferson.mercadolivre.opiniao;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +34,7 @@ public class OpiniaoControllerTestImpl {
 	}
 	
 	@Test
+	@WithMockUser
 	public void adicionaOpiniaoDeveriaSalvarUmaOpiniaoEmUmProdutoQuandoIdExistir() throws Exception {
 		String json = objectMapper.writeValueAsString(request);
 	

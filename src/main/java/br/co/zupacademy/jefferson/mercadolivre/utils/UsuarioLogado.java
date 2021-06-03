@@ -19,9 +19,9 @@ public class UsuarioLogado implements UserDetailsService {
 	private static final Logger LOG = LoggerFactory.getLogger(UsuarioLogado.class);
 
 	@Autowired
-	private  UsuarioRepository usuarioRepository;
+	private UsuarioRepository usuarioRepository;
 
-	public  Usuario getUsuarioLogado() {
+	public Usuario getUsuarioLogado() {
 		String name = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
 		return usuario.get();
