@@ -2,8 +2,10 @@ package br.co.zupacademy.jefferson.mercadolivre.produto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,7 @@ import javax.persistence.PrePersist;
 import org.springframework.util.Assert;
 
 import br.co.zupacademy.jefferson.mercadolivre.categoria.Categoria;
+import br.co.zupacademy.jefferson.mercadolivre.opiniao.Opiniao;
 import br.co.zupacademy.jefferson.mercadolivre.usuario.Usuario;
 import br.co.zupacademy.jefferson.mercadolivre.utils.UsuarioLogado;
 
@@ -47,7 +50,9 @@ public class Produto {
 	private Set<CaracteristicaProduto> caracteristicas = new HashSet<>();
 	@OneToMany(mappedBy = "produto", cascade= CascadeType.MERGE)
 	private Set<ImagemProduto> imagens = new HashSet<>();
-
+	@OneToMany(mappedBy = "produto", cascade= CascadeType.ALL)
+	private List<Opiniao> opinioes = new ArrayList<>();
+	
 	@Deprecated
 	public Produto() {
 	}

@@ -1,8 +1,10 @@
 package br.co.zupacademy.jefferson.mercadolivre.usuario;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -22,12 +25,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
+import br.co.zupacademy.jefferson.mercadolivre.opiniao.Opiniao;
 import br.co.zupacademy.jefferson.mercadolivre.perfis.Perfil;
 
 @Entity
 public class Usuario implements UserDetails {
 	private static final long serialVersionUID = 1L;
-
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +47,11 @@ public class Usuario implements UserDetails {
 	joinColumns = @JoinColumn(name = "usuario_id"),
 	inverseJoinColumns = @JoinColumn(name = "perfil_id"))
 	private Set<Perfil> perfis = new HashSet<>();
-
+	
+	@OneToMany(mappedBy = "produto")
+	private List<Opiniao> opinioes = new ArrayList<>();
+	
+	
 	@Deprecated
 	public Usuario() {
 	}
