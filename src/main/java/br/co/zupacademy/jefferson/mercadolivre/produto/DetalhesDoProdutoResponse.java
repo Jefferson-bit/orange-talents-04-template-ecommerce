@@ -4,14 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.OptionalDouble;
 import java.util.Set;
-import java.util.stream.IntStream;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import br.co.zupacademy.jefferson.mercadolivre.opiniao.Opiniao;
 import br.co.zupacademy.jefferson.mercadolivre.opiniao.OpiniaoResponse;
-import br.co.zupacademy.jefferson.mercadolivre.pergunta.Pergunta;
-import br.co.zupacademy.jefferson.mercadolivre.pergunta.PerguntaResponse;
 
 public class DetalhesDoProdutoResponse {
 
@@ -20,24 +17,29 @@ public class DetalhesDoProdutoResponse {
 	private String descricao;
 	private BigDecimal valor;
 	private Set<DetalhesDaCaracteristicaProdutoResponse> caracteristicas = new HashSet<>();
-	private Set<DetalhesDaImagemDoProdutoResponse> linksDoProduto = new HashSet<>();
-	private List<PerguntaResponse> perguntas = new ArrayList<>();
+	private Set<String> linksDaImagem = new HashSet<>();
+	private SortedSet<String> perguntas = new TreeSet<>();
 	private List<OpiniaoResponse> opinioes = new ArrayList<>();
-
+	private double media;
+	private int total;
 	public DetalhesDoProdutoResponse() {
 	}
 
-	public DetalhesDoProdutoResponse(Produto produto, Set<CaracteristicaProduto> caracteristicas,
-			Set<ImagemProduto> imagemProduto, List<Opiniao> opinioes, List<Pergunta> perguntas) {
+	public DetalhesDoProdutoResponse(Produto produto) {
 		nome = produto.getNome();
 		quantidade = produto.getQuantidade();
 		descricao = produto.getDescricao();
 		valor = produto.getValor();
-		caracteristicas.forEach(obj -> this.caracteristicas.add(new DetalhesDaCaracteristicaProdutoResponse(obj)));
-		imagemProduto.forEach(obj -> this.linksDoProduto.add(new DetalhesDaImagemDoProdutoResponse(obj)));
-		opinioes.forEach(obj -> this.opinioes.add(new OpiniaoResponse(obj)));
-		perguntas.forEach(obj -> this.perguntas.add(new PerguntaResponse(obj)));
-
+		//1
+		this.caracteristicas = produto.mapeiaCaracteristicas(DetalhesDaCaracteristicaProdutoResponse::new);
+		//1
+		this.linksDaImagem = produto.mapeiaImagensDoProduto(obj -> obj.getLink());
+		//1
+		this.perguntas = produto.mapeiaPergunta(obj -> obj.getTitulo());
+		//1
+		this.opinioes = produto.mapeiaOpiniao(OpiniaoResponse::new);
+		media = produto.media();
+		total = produto.total();
 	}
 
 	public Set<DetalhesDaCaracteristicaProdutoResponse> getCaracteristicas() {
@@ -59,13 +61,12 @@ public class DetalhesDoProdutoResponse {
 	public BigDecimal getValor() {
 		return valor;
 	}
-
-	public Set<DetalhesDaImagemDoProdutoResponse> getLinksDoProduto() {
-		return linksDoProduto;
+	
+	public Set<String> getLinksDaImagem() {
+		return linksDaImagem;
 	}
-
-
-	public List<PerguntaResponse> getPerguntas() {
+	
+	public SortedSet<String> getPerguntas() {
 		return perguntas;
 	}
 
@@ -73,9 +74,12 @@ public class DetalhesDoProdutoResponse {
 		return opinioes;
 	}
 	
-	public OptionalDouble getNotaMedia() {
-		IntStream mapToInt = opinioes.stream().mapToInt(obj -> obj.getNota());
-		return mapToInt.average();
+	public double getMedia() {
+		return media;
+	}
+	
+	public int getTotal() {
+		return total;
 	}
 
 }

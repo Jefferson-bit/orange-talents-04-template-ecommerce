@@ -1,14 +1,19 @@
 package br.co.zupacademy.jefferson.mercadolivre.produto;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,12 +24,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PrePersist;
 
 import org.springframework.util.Assert;
 
 import br.co.zupacademy.jefferson.mercadolivre.categoria.Categoria;
 import br.co.zupacademy.jefferson.mercadolivre.opiniao.Opiniao;
+import br.co.zupacademy.jefferson.mercadolivre.opiniao.OpiniaoResponse;
 import br.co.zupacademy.jefferson.mercadolivre.pergunta.Pergunta;
 import br.co.zupacademy.jefferson.mercadolivre.usuario.Usuario;
 import br.co.zupacademy.jefferson.mercadolivre.utils.UsuarioLogado;
@@ -53,9 +60,10 @@ public class Produto {
 	private Set<CaracteristicaProduto> caracteristicas = new HashSet<>();
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
 	private Set<ImagemProduto> imagens = new HashSet<>();
-	@OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
+	@OneToMany(mappedBy = "produto")
 	private List<Opiniao> opinioes = new ArrayList<>();
 	@OneToMany(mappedBy = "produto", fetch = FetchType.LAZY)
+	@OrderBy("titulo asc")
 	private List<Pergunta> perguntas = new ArrayList<>();
 
 	@Deprecated
@@ -212,6 +220,43 @@ public class Produto {
 		return this.usuario.equals(usuario);
 	}
 
+	public Set<DetalhesDaCaracteristicaProdutoResponse> mapeiaCaracteristicas(
+			Function<CaracteristicaProduto, DetalhesDaCaracteristicaProdutoResponse> funcaoMap) {
+		return this.caracteristicas.stream().map(funcaoMap).collect(Collectors.toSet());
+	}
 
-	
+	public <T> Set<T> mapeiaImagensDoProduto(Function<ImagemProduto, T> funcaoMap) {
+		return this.imagens.stream().map(funcaoMap).collect(Collectors.toSet());
+	}
+
+	public <T extends Comparable<T>> SortedSet<T> mapeiaPergunta(Function<Pergunta, T> funcaoMap) {
+		return this.perguntas.stream().map(funcaoMap).collect(Collectors.toCollection(TreeSet::new));
+	}
+
+	public <T> List<OpiniaoResponse> mapeiaOpiniao(Function<Opiniao, OpiniaoResponse> funcaoMap) {
+		return this.opinioes.stream().map(funcaoMap).collect(Collectors.toList());
+	}
+
+	public double media() {
+		IntStream mapToInt = opinioes.stream().mapToInt(obj -> obj.getNota());
+		OptionalDouble notaOptionalDouble = mapToInt.average();
+		DecimalFormat decimalFormat = new DecimalFormat("0.##");
+		decimalFormat.format(notaOptionalDouble.getAsDouble());
+		return notaOptionalDouble.orElse(0.0);
+	}
+
+	public int total() {
+		return this.opinioes.size();
+	}
+
+	public boolean abateEstoque(int quantidade) {
+		Assert.isTrue(quantidade > 0, "a quantidade precisar ser maior que zero");
+		if (quantidade <= 0) {
+			throw new IllegalArgumentException("Estoque não pode ser menor ou igual a zero ");
+		}
+		this.quantidade -= quantidade;
+		return true;
+
+	}
+
 }

@@ -1,13 +1,13 @@
 
 package br.co.zupacademy.jefferson.mercadolivre.produto;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping(value = "/produtos")
@@ -19,13 +19,9 @@ public class BuscaProdutoController {
 		this.produtoRepository = produtoRepository;
 	}
 
-	@GetMapping
-	public ResponseEntity <List<DetalhesDoProdutoResponse>> buscaTudo(){
-		List<Produto> produtoList = produtoRepository.findAll();
-		List<DetalhesDoProdutoResponse> produtoResponse = produtoList.stream()
-			.map(obj -> 
-			 new DetalhesDoProdutoResponse(obj, obj.getCaracteristicas(), obj.getImagens(), obj.getOpinioes(), obj.getPerguntas()))
-			.collect(Collectors.toList());
-		return ResponseEntity.ok(produtoResponse);
+	@GetMapping(value = "/{id}")
+	public ResponseEntity <DetalhesDoProdutoResponse> buscaProdutos(@PathVariable Long id){
+		Produto produto = produtoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		return ResponseEntity.ok(new DetalhesDoProdutoResponse(produto));
 		}
 }
