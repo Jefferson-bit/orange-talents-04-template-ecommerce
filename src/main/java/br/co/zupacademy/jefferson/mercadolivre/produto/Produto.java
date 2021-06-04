@@ -7,11 +7,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +25,7 @@ import org.springframework.util.Assert;
 
 import br.co.zupacademy.jefferson.mercadolivre.categoria.Categoria;
 import br.co.zupacademy.jefferson.mercadolivre.opiniao.Opiniao;
+import br.co.zupacademy.jefferson.mercadolivre.pergunta.Pergunta;
 import br.co.zupacademy.jefferson.mercadolivre.usuario.Usuario;
 import br.co.zupacademy.jefferson.mercadolivre.utils.UsuarioLogado;
 
@@ -48,15 +51,17 @@ public class Produto {
 	private Instant cadastradoEm;
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
 	private Set<CaracteristicaProduto> caracteristicas = new HashSet<>();
-	@OneToMany(mappedBy = "produto", cascade= CascadeType.MERGE)
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
 	private Set<ImagemProduto> imagens = new HashSet<>();
-	@OneToMany(mappedBy = "produto", cascade= CascadeType.MERGE)
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
 	private List<Opiniao> opinioes = new ArrayList<>();
-	
+	@OneToMany(mappedBy = "produto", fetch = FetchType.LAZY)
+	private List<Pergunta> perguntas = new ArrayList<>();
+
 	@Deprecated
 	public Produto() {
 	}
-	
+
 	public Produto(String nome, Integer quantidade, String descricao, BigDecimal valor, Categoria categoria,
 			Usuario usuario, Collection<CaracteristicaRequest> caracteristicas) {
 		this.nome = nome;
@@ -65,11 +70,10 @@ public class Produto {
 		this.valor = valor;
 		this.categoria = categoria;
 		this.usuario = usuario;
-		this.caracteristicas.addAll(caracteristicas.stream().map(caracteristica ->  caracteristica.toModel(this))
-		.collect(Collectors.toSet()));
+		this.caracteristicas.addAll(caracteristicas.stream().map(caracteristica -> caracteristica.toModel(this))
+				.collect(Collectors.toSet()));
 		Assert.isTrue(caracteristicas.size() >= 3, "Todo produto precisa ter no minimo 3 caracteristicas");
 	}
-
 
 	@PrePersist
 	public void createdAt() {
@@ -107,7 +111,19 @@ public class Produto {
 	public Set<CaracteristicaProduto> getCaracteristicas() {
 		return caracteristicas;
 	}
-	
+
+	public Set<ImagemProduto> getImagens() {
+		return imagens;
+	}
+
+	public List<Opiniao> getOpinioes() {
+		return opinioes;
+	}
+
+	public List<Pergunta> getPerguntas() {
+		return perguntas;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -132,7 +148,7 @@ public class Produto {
 			return false;
 		return true;
 	}
-	
+
 	public static class ProdutoBuilder {
 		private String nome;
 		private Integer quantidade;
@@ -141,45 +157,45 @@ public class Produto {
 		private Categoria categoria;
 		private Usuario usuario;
 		private Set<CaracteristicaRequest> caracteristicas = new HashSet<>();
-		
+
 		public ProdutoBuilder() {
 		}
-		
+
 		public ProdutoBuilder nome(String nome) {
 			this.nome = nome;
 			return this;
 		}
-		
+
 		public ProdutoBuilder quantidade(Integer quantidade) {
 			this.quantidade = quantidade;
 			return this;
 		}
-		
+
 		public ProdutoBuilder descricao(String descricao) {
 			this.descricao = descricao;
 			return this;
 		}
-		
+
 		public ProdutoBuilder valor(BigDecimal valor) {
 			this.valor = valor;
 			return this;
 		}
-		
+
 		public ProdutoBuilder categoria(Categoria categoria) {
 			this.categoria = categoria;
 			return this;
 		}
-		
+
 		public ProdutoBuilder usuario(Usuario usuario) {
 			this.usuario = usuario;
 			return this;
 		}
-		
+
 		public ProdutoBuilder caracteristicas(Set<CaracteristicaRequest> caracteristicas) {
 			this.caracteristicas = caracteristicas;
 			return this;
 		}
-		
+
 		public Produto build() {
 			return new Produto(nome, quantidade, descricao, valor, categoria, usuario, caracteristicas);
 		}
@@ -195,4 +211,7 @@ public class Produto {
 		Usuario usuario = usuarioLogado.getUsuarioLogado();
 		return this.usuario.equals(usuario);
 	}
+
+
+	
 }

@@ -39,5 +39,15 @@ public class Opiniao {
 		this.produto = produto;
 	}
 	
+	public String getDescricao() {
+		return descricao;
+	}
 	
+	public Integer getNota() {
+		return nota;
+	}
+	
+	public String getTitulo() {
+		return titulo;
+	}
 }

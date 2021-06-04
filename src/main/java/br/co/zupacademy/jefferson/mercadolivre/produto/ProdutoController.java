@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.co.zupacademy.jefferson.mercadolivre.categoria.Categoria;
 import br.co.zupacademy.jefferson.mercadolivre.categoria.CategoriaRepository;
@@ -52,7 +53,7 @@ public class ProdutoController {
 	@PostMapping(value = "/{id}/imagens")
 	public ResponseEntity<Void> adicionaImagens( @PathVariable Long id, @Valid ImagensRequest request){
 		Set<String> links = uploadFake.envia(request.getImagens());
-		Produto produto = produtoRepository.getOne(id);
+		 Produto produto = produtoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
 		if(!produto.verificaSeEDosuarioLogado(usuarioLogado)) 
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
