@@ -30,6 +30,7 @@ import javax.persistence.PrePersist;
 import org.springframework.util.Assert;
 
 import br.co.zupacademy.jefferson.mercadolivre.categoria.Categoria;
+import br.co.zupacademy.jefferson.mercadolivre.excecao.EfetuacaoDeCompraException;
 import br.co.zupacademy.jefferson.mercadolivre.opiniao.Opiniao;
 import br.co.zupacademy.jefferson.mercadolivre.opiniao.OpiniaoResponse;
 import br.co.zupacademy.jefferson.mercadolivre.pergunta.Pergunta;
@@ -216,7 +217,7 @@ public class Produto {
 	}
 
 	public boolean verificaSeEDosuarioLogado(UsuarioLogado usuarioLogado) {
-		Usuario usuario = usuarioLogado.getUsuarioLogado();
+//		Usuario usuario = usuarioLogado.getUsuarioLogado();
 		return this.usuario.equals(usuario);
 	}
 
@@ -251,12 +252,11 @@ public class Produto {
 
 	public boolean abateEstoque(int quantidade) {
 		Assert.isTrue(quantidade > 0, "a quantidade precisar ser maior que zero");
-		if (quantidade <= 0) {
-			throw new IllegalArgumentException("Estoque não pode ser menor ou igual a zero ");
+		if (quantidade <= this.quantidade) {
+			this.quantidade -= quantidade;
+			return true;
 		}
-		this.quantidade -= quantidade;
-		return true;
-
+		throw new EfetuacaoDeCompraException("Estoque não pode ser menor ou igual a zero ");
 	}
 
 }

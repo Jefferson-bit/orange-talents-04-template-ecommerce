@@ -42,6 +42,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/compras/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/retorno-pagseguro/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/retorno-paypal/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/ranking/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/notas-fiscais/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/email/**").permitAll()
                 .anyRequest().authenticated();
     }
 }

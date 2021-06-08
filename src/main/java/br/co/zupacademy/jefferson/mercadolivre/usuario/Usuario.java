@@ -110,13 +110,4 @@ public class Usuario implements UserDetails {
 	public String getPassword() {
 		return senha;
 	}
-	
-	public boolean hasRole(String role) {
-		for (Perfil perfil : perfis) {
-			if(perfil.getAuthority().equals(role)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

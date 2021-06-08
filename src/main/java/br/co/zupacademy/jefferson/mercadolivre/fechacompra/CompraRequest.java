@@ -4,6 +4,7 @@ package br.co.zupacademy.jefferson.mercadolivre.fechacompra;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import br.co.zupacademy.jefferson.mercadolivre.enums.Carteira;
 import br.co.zupacademy.jefferson.mercadolivre.produto.Produto;
 import br.co.zupacademy.jefferson.mercadolivre.usuario.Usuario;
 

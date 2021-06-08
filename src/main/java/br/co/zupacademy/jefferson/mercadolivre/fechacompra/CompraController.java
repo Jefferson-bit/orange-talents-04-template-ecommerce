@@ -4,7 +4,6 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,47 +23,29 @@ public class CompraController {
 
 	private CompraRepository compraRepository;
 	private ProdutoRepository produtoRepository;
-	private ApplicationEventPublisher applicationEventPublisher;
 	private UsuarioLogado usuarioLogado;
-		
+	private CarteiraAbstract carteiraAbstract;
+
 	public CompraController(CompraRepository compraRepository, ProdutoRepository produtoRepository,
-			ApplicationEventPublisher applicationEventPublisher, UsuarioLogado usuarioLogado) {
+		UsuarioLogado usuarioLogado,
+		CarteiraAbstract carteiraAbstract) {
 		this.compraRepository = compraRepository;
 		this.produtoRepository = produtoRepository;
-		this.applicationEventPublisher = applicationEventPublisher;
 		this.usuarioLogado = usuarioLogado;
+		this.carteiraAbstract = carteiraAbstract;
 	}
 
 	@PostMapping
 	@Transactional
 	public ResponseEntity<CompraRequest> compraProduto(@Valid @RequestBody CompraRequest request) {
+
 		Produto produto = produtoRepository.findById(request.getIdProduto())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		boolean abateEstoque = produto.abateEstoque(request.getQuantidade());
+		produto.abateEstoque(request.getQuantidade());
 
-		if (abateEstoque) {
-			Compra compra = request.toModel(produto, usuarioLogado.getUsuarioLogado());
-			simulaEnvioDeEmail(produto);
-			compraRepository.save(compra);
-			if(compra.getCarteira().equals(Carteira.PAG_SEGURO)) {
-				return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("https://www.baeldung.com")).build();
-			}else {
-				// ESTOU REDIRECIONANDO pra essas url pq no desafio a url não existe e está me retornando 404,
-				//mas funciona, a compra é efetuada, salva no banco e é redirecionado pras url
-				return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("https://www.alura.com.br")).build();
-			}
-		}
-
-		return ResponseEntity.badRequest().build();
+		Compra compra = request.toModel(produto, usuarioLogado.getUsuarioLogado());
+		compraRepository.save(compra);
+		URI uri = carteiraAbstract.redirecionaCompra(request.getCarteira(), produto);
+		return ResponseEntity.status(HttpStatus.FOUND).location(uri).build();
 	}
-
-	private void simulaEnvioDeEmail(Produto produto) {
-		EmailRequest emailRequest = new EmailRequest(this, "br.com.zup@bootcamp", "zupper",
-				produto.getUsuario().getEmail(), "Compra do ps5", "Obrigado por compra na nossa api do mercado livre",
-				"text/html");
-		applicationEventPublisher.publishEvent(emailRequest);
-	}
-	
-	
-	
 }

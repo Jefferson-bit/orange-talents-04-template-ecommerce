@@ -1,21 +1,16 @@
-package br.co.zupacademy.jefferson.mercadolivre.fechacompra;
+package br.co.zupacademy.jefferson.mercadolivre.sistemaexterno;
 
-import org.springframework.context.ApplicationEvent;
+public class EmailRequest {
 
-public class EmailRequest extends ApplicationEvent{
-	private static final long serialVersionUID = 1L;
-	
-	
 	private String fromEmail;
 	private String fromName;
 	private String to;
 	private String subject;
 	private String body;
 	private String contentType;
-	
-	public EmailRequest(Object source, String fromEmail, String fromName, String to, String subject, String body,
+
+	public EmailRequest(String fromEmail, String fromName, String to, String subject, String body,
 			String contentType) {
-		super(source);
 		this.fromEmail = fromEmail;
 		this.fromName = fromName;
 		this.to = to;
@@ -47,6 +42,11 @@ public class EmailRequest extends ApplicationEvent{
 	public String getContentType() {
 		return contentType;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "EmailRequestTest [fromEmail=" + fromEmail + ", fromName=" + fromName + ", to=" + to + ", subject="
+				+ subject + ", body=" + body + ", contentType=" + contentType + "]";
+	}
+
 }

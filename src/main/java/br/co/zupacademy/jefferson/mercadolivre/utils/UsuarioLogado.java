@@ -9,19 +9,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import br.co.zupacademy.jefferson.mercadolivre.usuario.Usuario;
 import br.co.zupacademy.jefferson.mercadolivre.usuario.UsuarioRepository;
 
-@Component
+@Service
 public class UsuarioLogado implements UserDetailsService {
 	private static final Logger LOG = LoggerFactory.getLogger(UsuarioLogado.class);
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
-	public Usuario getUsuarioLogado() {
+	public  Usuario getUsuarioLogado() {
 		String name = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
 		return usuario.get();
