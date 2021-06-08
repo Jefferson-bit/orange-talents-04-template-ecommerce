@@ -1,22 +1,26 @@
 package br.co.zupacademy.jefferson.mercadolivre.enums;
 
+import java.net.URI;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import br.co.zupacademy.jefferson.mercadolivre.fechacompra.Compra;
+
 public enum Carteira {
 
-	PAG_SEGURO(1, "PAG_SEGURO"), PAY_PAL(2, "PAY_PAL");
+	PAG_SEGURO() {
+		@Override
+		public URI redirecionaUrl(Compra compra) {
+			URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/retorno-pagseguro/{id}").buildAndExpand(compra.getId()).toUri();
+			return URI.create("pagseguro.com/"+ compra.getId() + "?redirectUrl="+uri);
+		}
+	}, PAY_PAL() {
+		@Override
+		public URI redirecionaUrl(Compra compra) {
+			URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/retorno-paypal/{id}").buildAndExpand(compra.getId()).toUri();
+			return URI.create("paypal.com/"+ compra.getId() + "?redirectUrl="+uri);
+		}
+	};
 
-	private String tipoCarteira;
-	private int code;
-
-	Carteira(int code, String tipoCarteira) {
-		this.code = code;
-		this.tipoCarteira = tipoCarteira;
-	}
-
-	public int getCode() {
-		return code;
-	}
-
-	public String getTipoCarteira() {
-		return tipoCarteira;
-	}
+	public abstract URI redirecionaUrl(Compra compra);
 }

@@ -1,5 +1,6 @@
 package br.co.zupacademy.jefferson.mercadolivre.fechacompra;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,10 +71,17 @@ public class Compra {
 	public Produto getProduto() {
 		return produto;
 	}
-
+	
+	public Carteira getCarteira() {
+		return carteira;
+	}
+	
+	public URI redirecionaUri() {
+		return this.carteira.redirecionaUrl(this);
+	}
+	
 	public void tentaEfetuarUmaTransacao(@Valid FechaTransacaoGateway request) {
 	Transacao novaTransacao = request.toModel(this);
-		
 		Assert.state(!this.transacoes.contains(novaTransacao),
 				"Já existe uma transacao igual a essa processada "
 						+ novaTransacao);

@@ -1,7 +1,5 @@
 package br.co.zupacademy.jefferson.mercadolivre.fechacompra;
 
-import java.net.URI;
-
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -24,15 +22,12 @@ public class CompraController {
 	private CompraRepository compraRepository;
 	private ProdutoRepository produtoRepository;
 	private UsuarioLogado usuarioLogado;
-	private CarteiraAbstract carteiraAbstract;
 
 	public CompraController(CompraRepository compraRepository, ProdutoRepository produtoRepository,
-		UsuarioLogado usuarioLogado,
-		CarteiraAbstract carteiraAbstract) {
+		UsuarioLogado usuarioLogado) {
 		this.compraRepository = compraRepository;
 		this.produtoRepository = produtoRepository;
 		this.usuarioLogado = usuarioLogado;
-		this.carteiraAbstract = carteiraAbstract;
 	}
 
 	@PostMapping
@@ -45,7 +40,7 @@ public class CompraController {
 
 		Compra compra = request.toModel(produto, usuarioLogado.getUsuarioLogado());
 		compraRepository.save(compra);
-		URI uri = carteiraAbstract.redirecionaCompra(request.getCarteira(), produto);
-		return ResponseEntity.status(HttpStatus.FOUND).location(uri).build();
+		
+		return ResponseEntity.status(HttpStatus.FOUND).location(compra.redirecionaUri()).build();
 	}
 }
